@@ -178,7 +178,7 @@ public class SystemProperties {
             this.classLoader = classLoader;
 
             Config javaSystemProperties = ConfigFactory.load("no-such-resource-only-system-props");
-            Config referenceConfig = ConfigFactory.parseResources("ethereumj.conf");
+            /*Config referenceConfig = ConfigFactory.parseResources("ethereumj.conf");
             logger.info("Config (" + (referenceConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): default properties from resource 'ethereumj.conf'");
             String res = System.getProperty("ethereumj.conf.res");
             Config cmdLineConfigRes = res != null ? ConfigFactory.parseResources(res) : ConfigFactory.empty();
@@ -203,6 +203,15 @@ public class SystemProperties {
                     .withFallback(userDirConfig)
                     .withFallback(userConfig)
                     .withFallback(cmdLineConfigRes)
+                    .withFallback(referenceConfig);*/
+            Config referenceConfig = ConfigFactory.parseResources("ethereumj.conf");
+            logger.info("Config (" + (referenceConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): default properties from resource 'ethereumj.conf'");
+            String file = System.getProperty("ethereumj.conf.file");
+            Config cmdLineConfigFile = file != null ? ConfigFactory.parseFile(new File(file)) : ConfigFactory.empty();
+            logger.info("Config (" + (cmdLineConfigFile.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from -Dethereumj.conf.file file '" + file + "'");
+            logger.info("Config (" + (apiConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): config passed via constructor");
+            config = apiConfig
+                    .withFallback(cmdLineConfigFile)
                     .withFallback(referenceConfig);
 
             logger.debug("Config trace: " + config.root().render(ConfigRenderOptions.defaults().
